@@ -57,7 +57,7 @@ jobs:
             TEST_PROJECT: Tests.NHibernate.Spatial.PostGis30
 
           - DB: SpatiaLite (SpatiaLite 5)
-            DB_INIT: apt install libsqlite3-mod-spatialite=5.*
+            DB_INIT: sudo apt install libsqlite3-mod-spatialite=5.*
             TEST_PROJECT: Tests.NHibernate.Spatial.SpatiaLite
 
     steps:
