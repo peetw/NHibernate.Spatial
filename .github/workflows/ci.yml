@@ -5,10 +5,11 @@ on: [push, pull_request]
 jobs:
   test:
     name: ${{ matrix.DB }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.OS }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest]
         include:
           - DB: MsSql2012 (SQL Server 2017)
             DB_INIT: |
@@ -54,6 +55,15 @@ jobs:
           - DB: PostGis30 (PostGIS 3.4 PostgreSQL 16)
             DB_INIT: docker run -d -e POSTGRES_PASSWORD=nhsp_test -p 15433:5432 -v ./Tests.NHibernate.Spatial.PostGis30/initdb:/docker-entrypoint-initdb.d postgis/postgis:16-3.4
             TEST_PROJECT: Tests.NHibernate.Spatial.PostGis30
+
+          - DB: SpatiaLite (SpatiaLite 4)
+            DB_INIT: sudo apt install libsqlite3-mod-spatialite=4.*
+            TEST_PROJECT: Tests.NHibernate.Spatial.SpatiaLite
+            OS: ubuntu-20.04
+
+          - DB: SpatiaLite (SpatiaLite 5)
+            DB_INIT: sudo apt install libsqlite3-mod-spatialite=5.*
+            TEST_PROJECT: Tests.NHibernate.Spatial.SpatiaLite
 
     steps:
       - name: Checkout repository
