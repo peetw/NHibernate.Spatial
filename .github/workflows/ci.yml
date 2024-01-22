@@ -62,6 +62,10 @@ jobs:
             DB_INIT: docker run -d -e POSTGRES_PASSWORD=nhsp_test -p 15433:5432 -v ./Tests.NHibernate.Spatial.PostGis30/initdb:/docker-entrypoint-initdb.d postgis/postgis:16-3.4
             TEST_PROJECT: Tests.NHibernate.Spatial.PostGis30
 
+          - DB: SpatiaLite (SpatiaLite 5)
+            DB_INIT: apt install libsqlite3-mod-spatialite=5.*
+            TEST_PROJECT: Tests.NHibernate.Spatial.SpatiaLite
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
