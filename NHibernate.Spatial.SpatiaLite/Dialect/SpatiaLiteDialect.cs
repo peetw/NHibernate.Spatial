@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using NHibernate.Dialect;
+using NHibernate.Mapping;
 using NHibernate.Spatial.Dialect.Function;
 using NHibernate.Spatial.Metadata;
 using NHibernate.Spatial.Type;
@@ -313,7 +314,7 @@ namespace NHibernate.Spatial.Dialect
         /// <returns></returns>
         public string GetSpatialCreateString(string schema,
                                              string table,
-                                             string column,
+                                             Column column,
                                              int srid,
                                              string subtype,
                                              int dimension,
@@ -323,13 +324,13 @@ namespace NHibernate.Spatial.Dialect
 
             builder.AppendFormat("ALTER TABLE {0} DROP COLUMN {1};"
                 , QuoteForTableName(table)
-                , QuoteForColumnName(column)
+                , QuoteForColumnName(column.Name)
             );
 
             builder.AppendFormat("SELECT AddGeometryColumn('{0}','{1}',{2},'{3}','{4}', {5});",
-                table, column, srid, subtype, ToXyzm(dimension), isNullable ? 0 : 1);
+                table, column.Name, srid, subtype, ToXyzm(dimension), isNullable ? 0 : 1);
 
-            builder.AppendFormat("SELECT CreateSpatialIndex('{0}','{1}');", table, column);
+            builder.AppendFormat("SELECT CreateSpatialIndex('{0}','{1}');", table, column.Name);
 
             return builder.ToString();
         }

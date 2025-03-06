@@ -3,6 +3,7 @@ using NHibernate.SqlCommand;
 using System;
 using System.Data;
 using System.Text;
+using NHibernate.Mapping;
 
 namespace NHibernate.Spatial.Dialect
 {
@@ -104,13 +105,13 @@ namespace NHibernate.Spatial.Dialect
         /// <param name="dimension">The dimension.</param>
         /// <param name="isNullable">Whether or not the column is nullable</param>
         /// <returns></returns>
-        public override string GetSpatialCreateString(string schema, string table, string column, int srid, string subtype, int dimension, bool isNullable)
+        public override string GetSpatialCreateString(string schema, string table, Column column, int srid, string subtype, int dimension, bool isNullable)
         {
             var builder = new StringBuilder();
 
             string quotedSchema = QuoteSchema(schema);
             string quoteForTableName = QuoteForTableName(table);
-            string quoteForColumnName = QuoteForColumnName(column);
+            string quoteForColumnName = QuoteForColumnName(column.Name);
 
             builder.AppendFormat("ALTER TABLE {0}{1} DROP COLUMN {2}"
                 , quotedSchema

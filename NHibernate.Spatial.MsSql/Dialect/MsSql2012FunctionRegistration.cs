@@ -24,6 +24,7 @@ using NHibernate.Util;
 using System;
 using System.Globalization;
 using System.Text;
+using NHibernate.Mapping;
 
 namespace NHibernate.Spatial.Dialect
 {
@@ -575,13 +576,13 @@ namespace NHibernate.Spatial.Dialect
         /// <param name="dimension">The dimension.</param>
         /// <param name="isNullable">Whether or not the column is nullable</param>
         /// <returns></returns>
-        public string GetSpatialCreateString(string schema, string table, string column, int srid, string subtype, int dimension, bool isNullable)
+        public string GetSpatialCreateString(string schema, string table, Column column, int srid, string subtype, int dimension, bool isNullable)
         {
             var builder = new StringBuilder();
 
             string quotedSchema = adaptor.QuoteSchema(schema);
             string quoteForTableName = adaptor.QuoteForTableName(table);
-            string quoteForColumnName = adaptor.QuoteForColumnName(column);
+            string quoteForColumnName = adaptor.QuoteForColumnName(column.Name);
 
             builder.AppendFormat("ALTER TABLE {0}{1} DROP COLUMN {2}"
                 , quotedSchema
@@ -607,7 +608,7 @@ namespace NHibernate.Spatial.Dialect
                 builder.AppendFormat("EXECUTE('ALTER TABLE {0}{1} WITH CHECK ADD  CONSTRAINT {2} CHECK ({3}.{4} = {5})')"
                     , quotedSchema
                     , quoteForTableName
-                    , adaptor.Quote("CK_NHSP_" + table + "_" + column + "_SRID")
+                    , adaptor.Quote("CK_NHSP_" + table + "_" + column.Name + "_SRID")
                     , quoteForColumnName
                     , adaptor.Quote("STSrid")
                     , srid
@@ -621,7 +622,7 @@ namespace NHibernate.Spatial.Dialect
                 builder.AppendFormat("ALTER TABLE {0}{1} WITH CHECK ADD  CONSTRAINT {2} CHECK ({3}.{4}() = '{5}')"
                     , quotedSchema
                     , quoteForTableName
-                    , adaptor.Quote("CK_NHSP_" + table + "_" + column + "_TYPE")
+                    , adaptor.Quote("CK_NHSP_" + table + "_" + column.Name + "_TYPE")
                     , quoteForColumnName
                     , adaptor.Quote("STGeometryType")
                     , subtype

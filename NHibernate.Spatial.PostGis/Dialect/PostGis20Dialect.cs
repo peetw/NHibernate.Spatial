@@ -24,6 +24,7 @@ using NHibernate.Type;
 using NHibernate.Util;
 using System;
 using System.Text;
+using NHibernate.Mapping;
 
 namespace NHibernate.Spatial.Dialect
 {
@@ -539,20 +540,33 @@ namespace NHibernate.Spatial.Dialect
         /// <param name="dimension">The dimension.</param>
         /// <param name="isNullable">Whether or not the column is nullable</param>
         /// <returns></returns>
-        public string GetSpatialCreateString(string schema, string table, string column, int srid, string subtype, int dimension, bool isNullable)
+        public string GetSpatialCreateString(string schema, string table, Column column, int srid, string subtype, int dimension, bool isNullable)
         {
             var builder = new StringBuilder();
 
             builder.AppendFormat("ALTER TABLE {0}{1} DROP COLUMN {2}"
                 , QuoteSchema(schema)
                 , QuoteForTableName(table)
-                , QuoteForColumnName(column)
+                , QuoteForColumnName(column.Name)
             );
 
             builder.Append(MultipleQueriesSeparator);
 
-            builder.AppendFormat("SELECT AddGeometryColumn('{0}','{1}','{2}',{3},'{4}',{5})",
-                schema, table, column, srid, subtype, dimension);
+            if (column.Value.Type.Name == nameof(PostGisGeographyType))
+            {
+                builder.AppendFormat("ALTER TABLE {0}{1} ADD COLUMN {2} geography({3}, {4})"
+                    , QuoteSchema(schema)
+                    , QuoteForTableName(table)
+                    , QuoteForColumnName(column.Name)
+                    , subtype
+                    , srid
+                );
+            }
+            else
+            {
+                builder.AppendFormat("SELECT AddGeometryColumn('{0}','{1}','{2}',{3},'{4}',{5})",
+                    schema, table, column.Name, srid, subtype, dimension);
+            }
 
             if (!isNullable)
             {
@@ -560,12 +574,12 @@ namespace NHibernate.Spatial.Dialect
                 builder.AppendFormat("ALTER TABLE {0}{1} ALTER COLUMN {2} SET NOT NULL"
                     , QuoteSchema(schema)
                     , QuoteForTableName(table)
-                    , QuoteForColumnName(column)
+                    , QuoteForColumnName(column.Name)
                 );
             }
 
             builder.Append(MultipleQueriesSeparator);
-            builder.Append(GetSpatialIndexCreateString(schema, table, column));
+            builder.Append(GetSpatialIndexCreateString(schema, table, column.Name));
 
             return builder.ToString();
         }

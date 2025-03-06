@@ -16,6 +16,7 @@ namespace Tests.NHibernate.Spatial
             typeof(PolygonZ),
             typeof(PolygonM),
             typeof(PolygonZM),
+            typeof(Geography),
         };
 
         protected override bool CheckDatabaseWasCleanedOnTearDown => false;

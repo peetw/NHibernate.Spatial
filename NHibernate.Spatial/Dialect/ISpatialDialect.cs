@@ -15,6 +15,7 @@
 // along with NHibernate.Spatial; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+using NHibernate.Mapping;
 using NHibernate.Spatial.Metadata;
 using NHibernate.Spatial.Type;
 using NHibernate.SqlCommand;
@@ -144,7 +145,7 @@ namespace NHibernate.Spatial.Dialect
         /// <param name="dimension">[3DIS] The dimension</param>
         /// <param name="isNullable">Whether or not the column is nullable</param>
         /// <returns></returns>
-        string GetSpatialCreateString(string schema, string table, string column, int srid, string subtype, int dimension, bool isNullable);
+        string GetSpatialCreateString(string schema, string table, Column column, int srid, string subtype, int dimension, bool isNullable);
 
         /// <summary>
         /// Gets the spatial drop string.
